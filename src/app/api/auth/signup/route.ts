@@ -39,6 +39,7 @@ export async function POST(request: Request) {
       email,
       password,
       options: {
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
         data: {
           full_name: fullName,
           ...metadata,

@@ -152,7 +152,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     }
   }
 
-  // --- Submission ---
+ // --- Submission ---
   async function handleSubmit(status: 'draft' | 'published') {
     if (!form.title.trim()) return toast.error('Please enter a story title');
     if (!form.category_id) return toast.error('Please select a category');
@@ -167,20 +167,55 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     try {
       // 1. Upload Main Featured Image (if changed)
       let featured_image = form.featured_image;
+      
       if (imageFile) {
         toast.loading('Uploading featured image...', { id: loadingToast });
-        const path = `articles/${form.slug}-main-${Date.now()}.${imageFile.name.split('.').pop()}`;
-        featured_image = await uploadImage(imageFile, path);
+        
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        formData.append('slug', form.slug || 'main');
+        
+        // Pass the original image URL for cleanup
+        if (article?.featured_image) {
+          formData.append('oldImageUrl', article.featured_image);
+        }
+
+        const uploadRes = await fetch('/api/admin/upload', { 
+          method: 'POST',
+          body: formData
+        });
+
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok) throw new Error(uploadData.error || 'Failed to upload main image');
+        
+        featured_image = uploadData.url;
       }
 
       // 2. Upload Block Images & Format Blocks
       toast.loading('Processing content blocks...', { id: loadingToast });
       const processedBlocks = await Promise.all(blocks.map(async (block, index) => {
-        let block_image_url = block.imagePreview; // Keep existing URL if no new file is selected
+        let block_image_url = block.imagePreview; // Keep existing URL if no new file
         
         if (block.imageFile) {
-          const path = `articles/${form.slug}-block-${index}-${Date.now()}.${block.imageFile.name.split('.').pop()}`;
-          block_image_url = await uploadImage(block.imageFile, path);
+          const blockFormData = new FormData();
+          blockFormData.append('file', block.imageFile);
+          blockFormData.append('slug', `${form.slug}-block-${index}`);
+
+          // Find the original block data to get the old image URL for cleanup
+          const originalBlock = article?.content_blocks?.find((b: any) => b.id === block.id);
+          if (originalBlock?.image_url) {
+            blockFormData.append('oldImageUrl', originalBlock.image_url);
+          }
+
+          const blockUploadRes = await fetch('/api/admin/upload', {
+            method: 'POST',
+            body: blockFormData
+          });
+
+          const blockUploadData = await blockUploadRes.json();
+          if (!blockUploadRes.ok) throw new Error(blockUploadData.error || 'Failed to upload block image');
+          
+          block_image_url = blockUploadData.url;
         }
 
         return {
@@ -201,7 +236,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
         company_id: form.company_id || undefined,
         featured_image,
         content_blocks: processedBlocks,
-        content: undefined, // Wipe legacy content to enforce new block engine cleanly
+        content: undefined, 
         status,
         published_at: status === 'published' && article?.status !== 'published' 
           ? new Date().toISOString() 

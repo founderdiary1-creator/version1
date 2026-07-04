@@ -4,14 +4,6 @@ import { ArticleCardHorizontal } from './ArticleCardHorizontal';
 import { Flame, ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 
-const featuredArticle = { image: '/images/news-turtlemint-ipo.jpg', category: 'FINTECH', title: 'Turtlemint IPO: Peak XV Nets ₹66.2 Cr, Nexus Venture Books 8.8X Gain', author: 'Anjali J.', date: '27th June, 2026' };
-
-const articles = [
-  { image: '/images/news-funding.jpg', category: 'NEWS', title: 'From CRED To Square Yards — Indian Startups Raised $1.1 Bn This Week', author: 'Lokesh C.', date: '27th June, 2026' },
-  { image: '/images/news-satcom.jpg', category: 'NEWS', title: 'India Drops 20% Local Sourcing Rule, Keeps Security Guardrails For Satcom', author: 'Shrishti B.', date: '26th June, 2026' },
-  { image: '/images/news-prabhjeet.jpg', category: 'CONSUMER SERVICES', title: '[Update] After Quitting Uber, Prabhjeet Singh To Join OpenAI As India MD', author: 'Gaurav B.', date: '26th June, 2026' },
-];
-
 const startups = [
   { name: 'Lickicious', letter: 'L', sector: 'FoodTech', totalFunding: '$52.8K+', stage: 'Angel Round' },
   { name: 'Sapioin', letter: 'S', sector: 'AI/ML', totalFunding: '$15.8Mn+', stage: 'Seed' },
@@ -54,7 +46,56 @@ function PremiumStartupCard({ name, letter, sector, totalFunding, stage }: any) 
   );
 }
 
-export function NewsGridSection() {
+interface NewsGridSectionProps {
+  articles: any[];
+  isLoading: boolean;
+}
+
+export function NewsGridSection({ articles, isLoading }: NewsGridSectionProps) {
+
+  // Shimmer loading state
+  if (isLoading) {
+    return (
+      <>
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes shimmer {
+            0% { background-position: -1000px 0; }
+            100% { background-position: 1000px 0; }
+          }
+          .animate-shimmer {
+            background: linear-gradient(to right, #f3f4f6 4%, #ffffff 25%, #f3f4f6 36%);
+            background-size: 1000px 100%;
+            animation: shimmer 2s infinite linear;
+          }
+        `}} />
+        <section className="max-w-[1240px] mx-auto px-4 sm:px-6 py-16 sm:py-20">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
+            <div className="lg:col-span-8 flex flex-col gap-8">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex gap-5">
+                  <div className="w-[280px] aspect-[16/10] rounded-xl animate-shimmer shrink-0" />
+                  <div className="flex-1 space-y-3 py-2">
+                    <div className="h-4 w-24 rounded animate-shimmer" />
+                    <div className="h-6 w-full rounded animate-shimmer" />
+                    <div className="h-4 w-3/4 rounded animate-shimmer" />
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="lg:col-span-4">
+              <div className="h-[500px] rounded-2xl animate-shimmer" />
+            </div>
+          </div>
+        </section>
+      </>
+    );
+  }
+
+  if (articles.length === 0) return null;
+
+  const featuredArticle = articles[0];
+  const remainingArticles = articles.slice(1);
+
   return (
     <>
       {/* Animation Keyframes */}
@@ -97,9 +138,9 @@ export function NewsGridSection() {
 
             {/* Standard Articles List */}
             <div className="flex flex-col gap-8 lg:gap-10">
-              {articles.map((article, idx) => (
+              {remainingArticles.map((article, idx) => (
                 <div 
-                  key={idx} 
+                  key={article.id || idx} 
                   className="animate-fade-up"
                   style={{ animationDelay: `${(idx + 2) * 100}ms` }}
                 >
@@ -109,7 +150,7 @@ export function NewsGridSection() {
             </div>
           </div>
 
-          {/* Right Column: Premium Sticky Startup Widget */}
+          {/* Right Column: Premium Sticky Startup Widget (Mock Data) */}
           <div className="lg:col-span-4 animate-fade-up" style={{ animationDelay: '300ms' }}>
             
             <div className="sticky top-24">

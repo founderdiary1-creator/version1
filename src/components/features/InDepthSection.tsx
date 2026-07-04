@@ -10,24 +10,23 @@ import type { Swiper as SwiperType } from 'swiper';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-const articles = [
-  { image: '/images/indepth-kunal-shah.jpg', category: 'IN-DEPTH', title: 'Kunal Shah & The WhatsApp Acid Test', author: 'Debarghya S.', date: '28th June, 2026' },
-  { image: '/images/indepth-financial-tracker.jpg', category: 'IN-DEPTH', title: 'FY26 Financial Tracker: Tracking The Financial Performance Of Indian Startups', author: 'Anjali J.', date: '27th June, 2026' },
-  { image: '/images/indepth-irdai.jpg', category: 'IN-DEPTH', title: "IRDAI's Reform Push That Can Upend Insurance Startups", author: 'Lokesh C.', date: '25th June, 2026' },
-  { image: '/images/indepth-meesho.jpg', category: 'ECOMMERCE', title: "Meesho's ₹202 Cr Question: Can It Crack India's Kirana Code?", author: 'Bismah M.', date: '25th June, 2026' },
-  { image: '/images/hero-kunal-shah.jpg', category: 'IN-DEPTH', title: 'The Outline: Kunal Shah On Building CRED', author: 'Debarghya S.', date: '28th June, 2026' },
-  { image: '/images/hero-financial-tracker.jpg', category: 'IN-DEPTH', title: 'Indian Startup Financials: Q1 FY26 Report', author: 'Anjali J.', date: '27th June, 2026' },
-];
+interface InDepthSectionProps {
+    articles: any[];
+    isLoading: boolean;
+}
+export function InDepthSection({ articles, isLoading }: InDepthSectionProps) {
+    const swiperRef = useRef<SwiperType | null>(null);
+    const [isBeginning, setIsBeginning] = useState(true);
+    const [isEnd, setIsEnd] = useState(false);
 
-export function InDepthSection() {
-  const swiperRef = useRef<SwiperType | null>(null);
-  const [isBeginning, setIsBeginning] = useState(true);
-  const [isEnd, setIsEnd] = useState(false);
-
-  return (
-    <>
-      {/* Premium Swiper Customization (Contained Styles Only) */}
-      <style dangerouslySetInnerHTML={{__html: `
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    return (
+        <>
+            {/* Premium Swiper Customization (Contained Styles Only) */}
+            <style dangerouslySetInnerHTML={{
+                __html: `
         .premium-swiper-contained {
           padding-top: 0.5rem !important;
           padding-bottom: 3.5rem !important;
@@ -47,93 +46,91 @@ export function InDepthSection() {
         }
       `}} />
 
-      <section className="bg-gradient-to-br from-[#E31E24] via-[#cc181f] to-[#990f13] py-16 sm:py-20">
-        
-        {/* Core Layout Container: Everything is strictly bound within max-w-[1200px] */}
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
-          
-          {/* Header Row */}
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
-            <div>
-              <div className="flex items-center gap-2 mb-2.5">
-                <Sparkles className="w-3.5 h-3.5 text-white/80" />
-                <span className="text-white/90 font-bold tracking-[0.15em] text-[11px] uppercase">Premium Analysis</span>
-              </div>
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-                Founder Diary In-Depth
-              </h2>
-            </div>
+            <section className="bg-gradient-to-br from-[#E31E24] via-[#cc181f] to-[#990f13] py-16 sm:py-20">
 
-            {/* Navigation Cluster */}
-            <div className="flex items-center gap-1 bg-black/15 p-1 rounded-full backdrop-blur-md border border-white/10 shadow-inner w-fit">
-              <button
-                onClick={() => swiperRef.current?.slidePrev()}
-                disabled={isBeginning}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  isBeginning 
-                    ? 'opacity-30 cursor-not-allowed text-white' 
-                    : 'bg-transparent hover:bg-white text-white hover:text-[#E31E24]'
-                }`}
-                aria-label="Previous slide"
-              >
-                <ChevronLeft size={20} strokeWidth={2.5} />
-              </button>
-              
-              <div className="w-[1px] h-5 bg-white/10 mx-0.5"></div>
+                {/* Core Layout Container: Everything is strictly bound within max-w-[1200px] */}
+                <div className="max-w-[1200px] mx-auto px-4 sm:px-6">
 
-              <button
-                onClick={() => swiperRef.current?.slideNext()}
-                disabled={isEnd}
-                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${
-                  isEnd 
-                    ? 'opacity-30 cursor-not-allowed text-white' 
-                    : 'bg-transparent hover:bg-white text-white hover:text-[#E31E24]'
-                }`}
-                aria-label="Next slide"
-              >
-                <ChevronRight size={20} strokeWidth={2.5} />
-              </button>
-            </div>
-          </div>
+                    {/* Header Row */}
+                    <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-8 gap-4">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2.5">
+                                <Sparkles className="w-3.5 h-3.5 text-white/80" />
+                                <span className="text-white/90 font-bold tracking-[0.15em] text-[11px] uppercase">Premium Analysis</span>
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
+                                Founder Diary In-Depth
+                            </h2>
+                        </div>
 
-          {/* Carousel Track: Clips completely clean at the container borders */}
-          <div className="relative">
-            <Swiper
-              modules={[Pagination]}
-              className="premium-swiper-contained"
-              slidesPerView={1}
-              spaceBetween={16}
-              grabCursor={true}
-              pagination={{ clickable: true }}
-              breakpoints={{
-                520: { slidesPerView: 2, spaceBetween: 20 },
-                768: { slidesPerView: 2.5, spaceBetween: 24 },
-                1024: { slidesPerView: 3, spaceBetween: 24 },
-                1200: { slidesPerView: 4, spaceBetween: 24 }, // Flawlessly fits exactly 4 clean cards inside the 1200px limit on screens
-              }}
-              onSwiper={(swiper) => { 
-                swiperRef.current = swiper;
-                setIsBeginning(swiper.isBeginning);
-                setIsEnd(swiper.isEnd);
-              }}
-              onSlideChange={(swiper) => {
-                setIsBeginning(swiper.isBeginning);
-                setIsEnd(swiper.isEnd);
-              }}
-            >
-              {articles.map((article, idx) => (
-                <SwiperSlide key={idx} className="h-auto">
-                  {/* Outer container layer to prevent shadow cutting clipping bugs */}
-                  <div className="py-1.5 h-full"> 
-                    <ArticleCardVertical {...article} />
-                  </div>
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
-          
-        </div>
-      </section>
-    </>
-  );
+                        {/* Navigation Cluster */}
+                        <div className="flex items-center gap-1 bg-black/15 p-1 rounded-full backdrop-blur-md border border-white/10 shadow-inner w-fit">
+                            <button
+                                onClick={() => swiperRef.current?.slidePrev()}
+                                disabled={isBeginning}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${isBeginning
+                                        ? 'opacity-30 cursor-not-allowed text-white'
+                                        : 'bg-transparent hover:bg-white text-white hover:text-[#E31E24]'
+                                    }`}
+                                aria-label="Previous slide"
+                            >
+                                <ChevronLeft size={20} strokeWidth={2.5} />
+                            </button>
+
+                            <div className="w-[1px] h-5 bg-white/10 mx-0.5"></div>
+
+                            <button
+                                onClick={() => swiperRef.current?.slideNext()}
+                                disabled={isEnd}
+                                className={`w-10 h-10 rounded-full flex items-center justify-center transition-all duration-200 ${isEnd
+                                        ? 'opacity-30 cursor-not-allowed text-white'
+                                        : 'bg-transparent hover:bg-white text-white hover:text-[#E31E24]'
+                                    }`}
+                                aria-label="Next slide"
+                            >
+                                <ChevronRight size={20} strokeWidth={2.5} />
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Carousel Track: Clips completely clean at the container borders */}
+                    <div className="relative">
+                        <Swiper
+                            modules={[Pagination]}
+                            className="premium-swiper-contained"
+                            slidesPerView={1}
+                            spaceBetween={16}
+                            grabCursor={true}
+                            pagination={{ clickable: true }}
+                            breakpoints={{
+                                520: { slidesPerView: 2, spaceBetween: 20 },
+                                768: { slidesPerView: 2.5, spaceBetween: 24 },
+                                1024: { slidesPerView: 3, spaceBetween: 24 },
+                                1200: { slidesPerView: 4, spaceBetween: 24 }, // Flawlessly fits exactly 4 clean cards inside the 1200px limit on screens
+                            }}
+                            onSwiper={(swiper) => {
+                                swiperRef.current = swiper;
+                                setIsBeginning(swiper.isBeginning);
+                                setIsEnd(swiper.isEnd);
+                            }}
+                            onSlideChange={(swiper) => {
+                                setIsBeginning(swiper.isBeginning);
+                                setIsEnd(swiper.isEnd);
+                            }}
+                        >
+                            {articles.map((article, idx) => (
+                                <SwiperSlide key={idx} className="h-auto">
+                                    {/* Outer container layer to prevent shadow cutting clipping bugs */}
+                                    <div className="py-1.5 h-full">
+                                        <ArticleCardVertical {...article} />
+                                    </div>
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    </div>
+
+                </div>
+            </section>
+        </>
+    );
 }

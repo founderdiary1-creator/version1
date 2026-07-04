@@ -178,6 +178,30 @@ export function HeroSection() {
                     <p className="text-gray-400 font-medium text-sm tracking-wide">Awaiting briefing data...</p>
                   </div>
                 )}
+
+                {/* Supporting Intel Grid (3 Columns) */}
+          {subFeatures.length > 0 && (
+            <div className="pt-16 relative">
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-10">
+                {subFeatures.map((sub: any, index: number) => (
+                  <ErrorBoundary key={sub.id || index}>
+                    <div className={`scroll-reveal scroll-reveal-delay-${(index % 3) + 2}`}>
+                      <ArticleCardVertical
+                        image={sub?.featured_image ?? '/images/placeholder.jpg'}
+                        category={sub?.category?.name ?? 'ANALYSIS'}
+                        title={sub?.title ?? 'Untitled'}
+                        author={sub?.author_name ?? 'Team Founder Diary'}
+                        date={formatDate(sub?.published_at ?? sub?.created_at)}
+                        slug={sub?.slug ?? '#'}
+                      />
+                    </div>
+                  </ErrorBoundary>
+                ))}
+              </div>
+            </div>
+          )}
+
               </ErrorBoundary>
             </div>
 
@@ -222,34 +246,7 @@ export function HeroSection() {
             </div>
           </div>
 
-          {/* Supporting Intel Grid (3 Columns) */}
-          {subFeatures.length > 0 && (
-            <div className="pt-16 border-t border-gray-100 relative">
-              {/* Subtle accent line on top of the border */}
-              <div className="absolute top-0 left-0 w-24 h-[1px] bg-[#E31E24]" />
-              
-              <h3 className="text-xl font-extrabold text-gray-900 tracking-tight mb-8 scroll-reveal scroll-reveal-delay-1">
-                Deep Dives &amp; Analysis
-              </h3>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10">
-                {subFeatures.map((sub: any, index: number) => (
-                  <ErrorBoundary key={sub.id || index}>
-                    <div className={`scroll-reveal scroll-reveal-delay-${(index % 3) + 2}`}>
-                      <ArticleCardVertical
-                        image={sub?.featured_image ?? '/images/placeholder.jpg'}
-                        category={sub?.category?.name ?? 'ANALYSIS'}
-                        title={sub?.title ?? 'Untitled'}
-                        author={sub?.author_name ?? 'Team Founder Diary'}
-                        date={formatDate(sub?.published_at ?? sub?.created_at)}
-                        slug={sub?.slug ?? '#'}
-                      />
-                    </div>
-                  </ErrorBoundary>
-                ))}
-              </div>
-            </div>
-          )}
+          
 
         </div>
       </section>

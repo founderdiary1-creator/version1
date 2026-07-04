@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useAdminStoriesQuery, useDeleteStoryMutation } from '@/hooks/useStories';
-import { Plus, Edit2, Trash2, Search, FileText, Eye, EyeOff } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, FileText, Eye, EyeOff, LayoutTemplate } from 'lucide-react';
 import Link from 'next/link';
 
 export default function AdminDashboard() {
@@ -43,12 +43,22 @@ export default function AdminDashboard() {
             <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
             <p className="text-gray-500 text-sm mt-1">Manage articles, content, and settings</p>
           </div>
-          <Link
-            href="/admin/editor"
-            className="flex items-center gap-2 bg-[#E31E24] text-white font-semibold px-5 py-2.5 rounded-lg hover:bg-[#C41A20] transition-colors"
-          >
-            <Plus size={18} /> New Article
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link
+              href="/admin/settings"
+              className="group flex items-center gap-2 bg-white text-gray-700 font-semibold px-5 py-2.5 rounded-xl border border-gray-200 hover:border-[#E31E24]/30 hover:shadow-[0_0_15px_rgba(227,30,36,0.1)] transition-all duration-300"
+            >
+              <LayoutTemplate size={18} className="text-gray-400 group-hover:text-[#E31E24] transition-colors" /> 
+              Edit Layout
+            </Link>
+            <Link
+              href="/admin/editor"
+              className="group flex items-center gap-2 bg-[#E31E24] text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-[#C41A20] hover:shadow-[0_4px_20px_rgba(227,30,36,0.3)] hover:-translate-y-0.5 transition-all duration-300"
+            >
+              <Plus size={18} className="group-hover:rotate-90 transition-transform duration-300" /> 
+              New Article
+            </Link>
+          </div>
         </div>
 
         {/* Stats */}

@@ -6,7 +6,7 @@ export async function GET(request: Request) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!, // Safe for server-side read of settings
     {
       cookies: {
         getAll() { return cookieStore.getAll(); },
@@ -16,7 +16,6 @@ export async function GET(request: Request) {
   );
 
   // 1. Fetch your saved landing page configuration from Supabase
-  // (Assuming you have a 'settings' table where the JSON config is saved)
   const { data: settingsData, error: settingsError } = await supabase
     .from('settings')
     .select('homepage_config')
@@ -40,14 +39,14 @@ export async function GET(request: Request) {
     'morearticles'
   ];
 
-  // 3. Extract all tags used across the entire layout config to build the "Automated Mix" pool
-  const allConfiguredTags: string[] = [];
+  // 3. Extract all configured categories (labeled 'tags' in UI) to build the Automated Pool
+  const allConfiguredCategories: string[] = [];
   sectionOrder.forEach((key) => {
     if (sectionConfigs[key]?.tags && Array.isArray(sectionConfigs[key].tags)) {
-      allConfiguredTags.push(...sectionConfigs[key].tags);
+      allConfiguredCategories.push(...sectionConfigs[key].tags);
     }
   });
-  const uniqueConfiguredTags = Array.from(new Set(allConfiguredTags));
+  const uniqueConfiguredCategories = Array.from(new Set(allConfiguredCategories));
 
   // 4. Run the deduplication pipeline loops
   for (const sectionKey of sectionOrder) {
@@ -59,12 +58,13 @@ export async function GET(request: Request) {
       continue;
     }
 
+    // FIXED: Added !inner to categories so we can filter by it
     let query = supabase
       .from('stories')
-      .select('id, title, slug, summary, featured_image, is_premium, published_at, categories(name)') // <-- Fixed!
+      .select('id, title, slug, summary, featured_image, is_premium, published_at, categories!inner(name)')
       .eq('status', 'published');
 
-    // 🛑 STRICT DEDUPLICATION: Exclude everything already pushed into higher components
+   // 🛑 STRICT DEDUPLICATION: Manually wrap the array in parentheses to bypass the Supabase bug
     if (seenIds.length > 0) {
       query = query.not('id', 'in', `(${seenIds.join(',')})`);
     }
@@ -75,23 +75,12 @@ export async function GET(request: Request) {
       query = query.in('id', config.selectedIds);
     } 
     else if (config.mode === 'tag' && config.tags?.length > 0) {
-      // Direct Tag Targeting Mode
-      query = query.contains('tags', config.tags);
+      // FIXED: Direct Category Targeting Mode (Queries related categories.name, NOT a tags column)
+      query = query.in('categories.name', config.tags);
       query = query.order('published_at', { ascending: false });
     } 
     else if (config.mode === 'auto' || !config.mode) {
-      // Automated Mode
-      if (sectionKey === 'hero') {
-        // Hero auto: Absolute latest published stories
-        query = query.order('published_at', { ascending: false });
-      } else {
-        // Non-hero auto: Fetch a dynamic mix of stories containing tags configured elsewhere
-        if (uniqueConfiguredTags.length > 0) {
-          // Matches any of the global admin tags (Overlap match)
-          query = query.or(`tags.cs.{${uniqueConfiguredTags.join(',')}}`);
-        }
-        query = query.order('published_at', { ascending: false });
-      }
+      query = query.order('published_at', { ascending: false });
     }
 
     // Apply the custom limit set by the admin panel range sliders/counters
@@ -111,4 +100,3 @@ export async function GET(request: Request) {
 
   return NextResponse.json(homepageData);
 }
-

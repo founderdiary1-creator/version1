@@ -2,7 +2,7 @@ import { ContentMode } from '@/app/admin/settings/page';
 import { Zap, Settings2, Plus, Minus, Tag as TagIcon, LayoutTemplate, Check, X } from 'lucide-react';
 import { useState, KeyboardEvent } from 'react';
 
-export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pageSections }: any) {
+export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pageSections, categories }: any) {
   const sectionName = pageSections.find((s: any) => s.id === activeSectionId)?.name;
 
   return (
@@ -24,7 +24,7 @@ export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pa
           <ArticleLimitControl count={config.count} onChange={(count) => onUpdate({ count })} />
 
           <div className={`transition-all duration-500 ${config.mode === 'tag' ? 'opacity-100 translate-y-0' : 'opacity-30 pointer-events-none -translate-y-2'}`}>
-            <TagManager tags={config.tags || []} onChange={(tags) => onUpdate({ tags })} />
+            <TagManager tags={config.tags || []} onChange={(tags) => onUpdate({ tags })} categories={categories} />
           </div>
         </div>
 
@@ -124,41 +124,67 @@ function ArticleLimitControl({ count, onChange }: { count: number, onChange: (c:
   );
 }
 
-function TagManager({ tags, onChange }: { tags: string[], onChange: (t: string[]) => void }) {
-  const [inputValue, setInputValue] = useState('');
+function TagManager({ tags, onChange, categories }: { tags: string[], onChange: (t: string[]) => void, categories: any[] }) {
 
-  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && inputValue.trim()) {
-      e.preventDefault();
-      const newTag = inputValue.trim();
-      if (!tags.includes(newTag)) {
-        onChange([...tags, newTag]);
-      }
-      setInputValue('');
+  const safeCategories = Array.isArray(categories) ? categories : (categories?.data  || []);
+  
+  // 2. Filter safely
+  const availableCategories = safeCategories.filter((c: any) => !tags.includes(c.name));
+
+  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedName = e.target.value;
+    if (selectedName && !tags.includes(selectedName)) {
+      onChange([...tags, selectedName]);
     }
+    // Reset dropdown back to default placeholder
+    e.target.value = "";
   };
 
   return (
     <div className="space-y-4">
       <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
-        <TagIcon size={16} /> Targeted Tags
+        <TagIcon size={16} /> Targeted Categories
       </h3>
-      <p className="text-xs text-gray-500">Press enter to add. Articles matching these will be pulled.</p>
+      <p className="text-xs text-gray-500">Select categories. Articles matching these will be dynamically pulled.</p>
       
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-wrap gap-2 focus-within:border-[#E31E24] focus-within:ring-2 focus-within:ring-[#E31E24]/10 transition-all">
-        {tags.map((tag) => (
-          <span key={tag} className="flex items-center gap-1.5 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
-            {tag}
-            <button onClick={() => onChange(tags.filter(t => t !== tag))} className="hover:text-[#E31E24] transition-colors bg-white/20 rounded-full p-0.5">
-              <X size={12} strokeWidth={3} />
-            </button>
-          </span>
-        ))}
-        <input 
-          type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
-          placeholder={tags.length === 0 ? "e.g. Startup, Funding..." : "Add tag..."}
-          className="flex-1 min-w-[120px] bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 py-1"
-        />
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-3 focus-within:border-[#E31E24] focus-within:ring-2 focus-within:ring-[#E31E24]/10 transition-all">
+        
+        {/* Selected Pills */}
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span key={tag} className="flex items-center gap-1.5 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+                {tag}
+                <button onClick={() => onChange(tags.filter(t => t !== tag))} className="hover:text-[#E31E24] transition-colors bg-white/20 rounded-full p-0.5">
+                  <X size={12} strokeWidth={3} />
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Custom Category Dropdown */}
+        <div className="relative">
+          <select
+            onChange={handleSelect}
+            defaultValue=""
+            className="w-full appearance-none bg-white border border-gray-200 text-sm text-gray-900 font-medium py-2.5 pl-3 pr-10 rounded-lg outline-none hover:border-gray-300 transition-colors cursor-pointer"
+          >
+            <option value="" disabled>Select a category to add...</option>
+            {availableCategories.map((cat : any) => (
+              <option key={cat.id} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
+            {availableCategories.length === 0 && (
+              <option value="" disabled>All categories selected</option>
+            )}
+          </select>
+          {/* Custom Chevron for the Select */}
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+          </div>
+        </div>
       </div>
     </div>
   );

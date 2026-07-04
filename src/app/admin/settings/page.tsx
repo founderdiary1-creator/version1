@@ -53,6 +53,12 @@ const fetchPublishedArticles = async () => {
   return res.json();
 };
 
+const fetchCategories = async () => {
+  const res = await fetch('/api/categories');
+  if (!res.ok) throw new Error('Failed to fetch categories');
+  return res.json();
+};
+
 // --- MAIN PAGE COMPONENT ---
 export default function LandingPageSettings() {
   const queryClient = useQueryClient();
@@ -72,6 +78,11 @@ export default function LandingPageSettings() {
   const { data: articlesPool = [] } = useQuery({
     queryKey: ['publishedArticlesForModal'],
     queryFn: fetchPublishedArticles,
+  });
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ['categoriesList'],
+    queryFn: fetchCategories,
   });
 
   // 3. Sync Server State to Local Draft State on load
@@ -170,6 +181,7 @@ export default function LandingPageSettings() {
               onUpdate={updateConfig}
               onOpenModal={() => setIsModalOpen(true)}
               pageSections={PAGE_SECTIONS}
+              categories={categories}
             />
           </div>
         </div>

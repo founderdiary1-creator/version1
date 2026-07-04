@@ -1,17 +1,9 @@
-import { LayoutTemplate, Settings2 } from "lucide-react";
-import { TagManager } from "./TagManager";
-import { ArticleLimitControl } from "./ArticleLimitController";
-import { ContentModeSelector } from "./ContentModelSelector";
-import { SectionConfig } from "@/app/admin/settings/page";
+import { ContentMode } from '@/app/admin/settings/page';
+import { Zap, Settings2, Plus, Minus, Tag as TagIcon, LayoutTemplate, Check, X } from 'lucide-react';
+import { useState, KeyboardEvent } from 'react';
 
-export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pageSections }: { 
-  activeSectionId: string; 
-  config: SectionConfig; 
-  onUpdate: (u: Partial<SectionConfig>) => void;
-  onOpenModal: () => void;
-  pageSections: { id: string; name: string }[];
-}) {
-  const sectionName = pageSections.find(s => s.id === activeSectionId)?.name;
+export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pageSections }: any) {
+  const sectionName = pageSections.find((s: any) => s.id === activeSectionId)?.name;
 
   return (
     <div key={activeSectionId} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -29,13 +21,10 @@ export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pa
         <ContentModeSelector currentMode={config.mode} onChange={(mode) => onUpdate({ mode })} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-6 border-t border-gray-100">
-          <ArticleLimitControl 
-            count={config.count} 
-            onChange={(count) => onUpdate({ count })} 
-          />
+          <ArticleLimitControl count={config.count} onChange={(count) => onUpdate({ count })} />
 
           <div className={`transition-all duration-500 ${config.mode === 'tag' ? 'opacity-100 translate-y-0' : 'opacity-30 pointer-events-none -translate-y-2'}`}>
-            <TagManager tags={config.tags} onChange={(tags) => onUpdate({ tags })} />
+            <TagManager tags={config.tags || []} onChange={(tags) => onUpdate({ tags })} />
           </div>
         </div>
 
@@ -54,11 +43,122 @@ export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pa
                 onClick={onOpenModal}
                 className="relative z-10 bg-white border-2 border-gray-200 text-gray-900 font-bold px-6 py-2.5 rounded-xl hover:border-[#E31E24] hover:text-[#E31E24] hover:shadow-[0_4px_15px_rgba(227,30,36,0.1)] transition-all duration-300 active:scale-95"
               >
-                Open Story Selector ({config.selectedIds.length}/{config.count} Selected)
+                Open Story Selector ({config.selectedIds?.length || 0}/{config.count} Selected)
               </button>
             </div>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ContentModeSelector({ currentMode, onChange }: { currentMode?: ContentMode, onChange: (m: ContentMode) => void }) {
+  const modes: { id: ContentMode; title: string; desc: string }[] = [
+    { id: 'auto', title: 'Automated', desc: 'Pulls the most recent published articles automatically.' },
+    { id: 'tag', title: 'Tag Based', desc: 'Dynamically fetches stories based on specific tags.' },
+    { id: 'manual', title: 'Manual Curated', desc: 'Hand-pick specific articles for this section.' },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+        <Zap size={16} className="text-[#E31E24]" /> Content Engine
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {modes.map((mode) => (
+          <label 
+            key={mode.id} 
+            className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md ${
+              currentMode === mode.id 
+                ? 'border-[#E31E24] bg-[#E31E24]/5 -translate-y-1' 
+                : 'border-gray-100 bg-white hover:border-gray-300'
+            }`}
+          >
+            <input 
+              type="radio" name="mode" value={mode.id} checked={currentMode === mode.id}
+              onChange={() => onChange(mode.id)} className="sr-only"
+            />
+            <div className="flex items-center justify-between mb-2">
+              <span className={`font-bold ${currentMode === mode.id ? 'text-[#E31E24]' : 'text-gray-900'}`}>
+                {mode.title}
+              </span>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
+                currentMode === mode.id ? 'bg-[#E31E24] text-white scale-100 shadow-sm' : 'bg-gray-100 scale-90'
+              }`}>
+                {currentMode === mode.id && <Check size={12} strokeWidth={3} />}
+              </div>
+            </div>
+            <p className="text-xs text-gray-500 leading-relaxed">{mode.desc}</p>
+          </label>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ArticleLimitControl({ count, onChange }: { count: number, onChange: (c: number) => void }) {
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider">Article Limit</h3>
+      <p className="text-xs text-gray-500">Maximum stories rendered in this block.</p>
+      <div className="flex items-center gap-4">
+        <div className="flex items-center bg-white border-2 border-gray-200 rounded-xl p-1 shadow-sm">
+          <button 
+            onClick={() => onChange(Math.max(1, count - 1))}
+            className="p-2.5 text-gray-400 hover:text-[#E31E24] hover:bg-[#E31E24]/10 rounded-lg transition-all active:scale-95"
+          >
+            <Minus size={18} strokeWidth={3} />
+          </button>
+          <span className="w-14 text-center font-extrabold text-xl text-gray-900">{count}</span>
+          <button 
+            onClick={() => onChange(Math.min(20, count + 1))}
+            className="p-2.5 text-gray-400 hover:text-[#E31E24] hover:bg-[#E31E24]/10 rounded-lg transition-all active:scale-95"
+          >
+            <Plus size={18} strokeWidth={3} />
+          </button>
+        </div>
+        <span className="text-sm font-bold text-gray-400">Cards Visible</span>
+      </div>
+    </div>
+  );
+}
+
+function TagManager({ tags, onChange }: { tags: string[], onChange: (t: string[]) => void }) {
+  const [inputValue, setInputValue] = useState('');
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && inputValue.trim()) {
+      e.preventDefault();
+      const newTag = inputValue.trim();
+      if (!tags.includes(newTag)) {
+        onChange([...tags, newTag]);
+      }
+      setInputValue('');
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-sm font-bold text-gray-900 uppercase tracking-wider flex items-center gap-2">
+        <TagIcon size={16} /> Targeted Tags
+      </h3>
+      <p className="text-xs text-gray-500">Press enter to add. Articles matching these will be pulled.</p>
+      
+      <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-wrap gap-2 focus-within:border-[#E31E24] focus-within:ring-2 focus-within:ring-[#E31E24]/10 transition-all">
+        {tags.map((tag) => (
+          <span key={tag} className="flex items-center gap-1.5 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm">
+            {tag}
+            <button onClick={() => onChange(tags.filter(t => t !== tag))} className="hover:text-[#E31E24] transition-colors bg-white/20 rounded-full p-0.5">
+              <X size={12} strokeWidth={3} />
+            </button>
+          </span>
+        ))}
+        <input 
+          type="text" value={inputValue} onChange={(e) => setInputValue(e.target.value)} onKeyDown={handleKeyDown}
+          placeholder={tags.length === 0 ? "e.g. Startup, Funding..." : "Add tag..."}
+          className="flex-1 min-w-[120px] bg-transparent text-sm text-gray-900 outline-none placeholder:text-gray-400 py-1"
+        />
       </div>
     </div>
   );

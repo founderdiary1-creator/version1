@@ -32,13 +32,13 @@ const PAGE_SECTIONS = [
 
 // --- API FETCHERS ---
 const fetchSettings = async () => {
-  const res = await fetch('/api/homepage');
+  const res = await fetch('/api/admin/settings');
   if (!res.ok) throw new Error('Failed to fetch settings');
   return res.json();
 };
 
 const saveSettings = async (newConfig: Record<string, SectionConfig>) => {
-  const res = await fetch('/api/homepage', {
+  const res = await fetch('/api/admin/settings', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ homepage_config: newConfig }),

@@ -1,65 +1,54 @@
+
 import { NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const page = parseInt(searchParams.get('page') || '1', 10);
-    const limit = parseInt(searchParams.get('limit') || '10', 10);
-    const category = searchParams.get('category');
-    const industry = searchParams.get('industry');
+  const cookieStore = await cookies();
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll() { return cookieStore.getAll(); }, setAll() {} } }
+  );
 
-    const cookieStore = await cookies();
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() { return cookieStore.getAll(); },
-          setAll() {},
-        },
-      }
-    );
+  const { searchParams } = new URL(request.url);
+  const page = parseInt(searchParams.get('page') || '1');
+  const limit = parseInt(searchParams.get('limit') || '10');
+  const categorySlug = searchParams.get('category'); // e.g., 'ai-economy'
+  const industryId = searchParams.get('industry');   // e.g., 'uuid-1234'
+  
+  const from = (page - 1) * limit;
+  const to = from + limit - 1;
 
-    let query = supabase
-      .from('stories')
-      .select('*, category:categories(*), industry:industries(*)', { count: 'exact' })
-      .eq('status', 'published')
-      .order('published_at', { ascending: false })
-      .range((page - 1) * limit, page * limit - 1); // 1-indexed page for pagination UI
+  // IMPORTANT: We use categories!inner() so Supabase knows to filter by the joined table
+  let query = supabase
+    .from('stories')
+    .select('id, title, slug, summary, featured_image, published_at, author_name, categories!inner(id, name, slug), industries(id, name)', { count: 'exact' })
+    .eq('status', 'published')
+    .order('published_at', { ascending: false });
 
-    if (category) {
-      query = query.eq('category.slug', category);
-    }
-    if (industry) {
-      query = query.eq('industry.slug', industry);
-    }
-
-    const { data, error, count } = await query;
-
-    if (error) {
-      console.error('[API_ERROR] /api/stories:', error);
-      return NextResponse.json(
-        { success: false, error: error.message, code: 500 },
-        { status: 500 }
-      );
-    }
-
-    const totalPages = count ? Math.ceil(count / limit) : 0;
-
-    return NextResponse.json({ 
-      success: true, 
-      data,
-      totalCount: count || 0,
-      page,
-      totalPages 
-    });
-  } catch (error: any) {
-    console.error('[API_ERROR] /api/stories (unexpected):', error);
-    return NextResponse.json(
-      { success: false, error: 'Internal Server Error', code: 500 },
-      { status: 500 }
-    );
+  // 1. Filter strictly by Category Slug
+  if (categorySlug) {
+    query = query.eq('categories.slug', categorySlug);
   }
+
+  // 2. Filter strictly by Industry ID
+  if (industryId) {
+    query = query.eq('industry_id', industryId);
+  }
+
+  query = query.range(from, to);
+
+  const { data, error, count } = await query;
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({
+    data: data || [],
+    total: count || 0,
+    page,
+    totalPages: count ? Math.ceil(count / limit) : 0,
+  });
 }

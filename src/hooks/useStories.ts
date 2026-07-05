@@ -9,21 +9,21 @@ export interface PaginatedResponse<T> {
   totalPages: number;
 }
 
-export function usePaginatedStories(page = 1, limit = 10, category?: string, industry?: string) {
+export function usePaginatedStories(page: number, limit: number, categorySlug?: string, industryId?: string) {
   return useQuery({
-    queryKey: ['stories', 'paginated', page, limit, category, industry],
-    queryFn: async (): Promise<PaginatedResponse<Article>> => {
-      const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
-      if (category) params.append('category', category);
-      if (industry) params.append('industry', industry);
-      
-      const response: any = await apiClient.get(`/stories?${params.toString()}`);
-      return {
-        data: response.data,
-        totalCount: response.totalCount,
-        page: response.page,
-        totalPages: response.totalPages,
-      };
+    // Cache invalidates and refetches automatically when any of these change
+    queryKey: ['stories', page, limit, categorySlug, industryId],
+    queryFn: async () => {
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: limit.toString(),
+      });
+      if (categorySlug) params.append('category', categorySlug);
+      if (industryId) params.append('industry', industryId);
+
+      const res = await fetch(`/api/stories?${params.toString()}`);
+      if (!res.ok) throw new Error('Failed to fetch stories');
+      return res.json();
     },
   });
 }
@@ -129,5 +129,17 @@ export function useDeleteStoryMutation() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin', 'stories'] });
     },
+  });
+}
+
+export function useCategoryBySlug(slug: string) {
+  return useQuery({
+    queryKey: ['category', slug],
+    queryFn: async () => {
+      const res = await fetch(`/api/categories/${slug}`);
+      if (!res.ok) throw new Error('Category not found');
+      return res.json();
+    },
+    retry: false, // Don't keep retrying if it's a 404
   });
 }

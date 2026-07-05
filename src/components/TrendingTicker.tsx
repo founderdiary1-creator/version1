@@ -18,7 +18,7 @@ export function TrendingTicker({ tags }: TrendingTickerProps) {
         {tags.map((tag) => (
           <Link
             key={tag}
-            href={`/${tag.toLowerCase().replace(/\s+/g, '-')}`}
+            href={`/category/${tag.toLowerCase().replace(/\s+/g, '-')}`}
             className="text-xs font-semibold text-gray-600 px-3 py-1 border border-gray-200 rounded-full hover:border-[#E31E24] hover:text-[#E31E24] transition-all duration-300"
           >
             {tag}

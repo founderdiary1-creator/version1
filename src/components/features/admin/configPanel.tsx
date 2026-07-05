@@ -24,7 +24,7 @@ export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pa
           <ArticleLimitControl count={config.count} onChange={(count) => onUpdate({ count })} />
 
           <div className={`transition-all duration-500 ${config.mode === 'tag' ? 'opacity-100 translate-y-0' : 'opacity-30 pointer-events-none -translate-y-2'}`}>
-            <TagManager tags={config.tags || []} onChange={(tags) => onUpdate({ tags })} categories={categories} />
+            <TagManager tags={config.tags || []} onChange={(tags) => onUpdate({ tags })} categories={categories.data} />
           </div>
         </div>
 
@@ -39,7 +39,7 @@ export function ConfigPanel({ activeSectionId, config, onUpdate, onOpenModal, pa
               <p className="text-sm text-gray-500 mt-1 max-w-sm mx-auto mb-6">
                 Manually hand-pick the exact {config.count} stories you want featured in this block.
               </p>
-              <button 
+              <button
                 onClick={onOpenModal}
                 className="relative z-10 bg-white border-2 border-gray-200 text-gray-900 font-bold px-6 py-2.5 rounded-xl hover:border-[#E31E24] hover:text-[#E31E24] hover:shadow-[0_4px_15px_rgba(227,30,36,0.1)] transition-all duration-300 active:scale-95"
               >
@@ -67,15 +67,14 @@ function ContentModeSelector({ currentMode, onChange }: { currentMode?: ContentM
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {modes.map((mode) => (
-          <label 
-            key={mode.id} 
-            className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md ${
-              currentMode === mode.id 
-                ? 'border-[#E31E24] bg-[#E31E24]/5 -translate-y-1' 
+          <label
+            key={mode.id}
+            className={`relative p-5 rounded-xl border-2 cursor-pointer transition-all duration-300 hover:shadow-md ${currentMode === mode.id
+                ? 'border-[#E31E24] bg-[#E31E24]/5 -translate-y-1'
                 : 'border-gray-100 bg-white hover:border-gray-300'
-            }`}
+              }`}
           >
-            <input 
+            <input
               type="radio" name="mode" value={mode.id} checked={currentMode === mode.id}
               onChange={() => onChange(mode.id)} className="sr-only"
             />
@@ -83,9 +82,8 @@ function ContentModeSelector({ currentMode, onChange }: { currentMode?: ContentM
               <span className={`font-bold ${currentMode === mode.id ? 'text-[#E31E24]' : 'text-gray-900'}`}>
                 {mode.title}
               </span>
-              <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
-                currentMode === mode.id ? 'bg-[#E31E24] text-white scale-100 shadow-sm' : 'bg-gray-100 scale-90'
-              }`}>
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${currentMode === mode.id ? 'bg-[#E31E24] text-white scale-100 shadow-sm' : 'bg-gray-100 scale-90'
+                }`}>
                 {currentMode === mode.id && <Check size={12} strokeWidth={3} />}
               </div>
             </div>
@@ -104,14 +102,14 @@ function ArticleLimitControl({ count, onChange }: { count: number, onChange: (c:
       <p className="text-xs text-gray-500">Maximum stories rendered in this block.</p>
       <div className="flex items-center gap-4">
         <div className="flex items-center bg-white border-2 border-gray-200 rounded-xl p-1 shadow-sm">
-          <button 
+          <button
             onClick={() => onChange(Math.max(1, count - 1))}
             className="p-2.5 text-gray-400 hover:text-[#E31E24] hover:bg-[#E31E24]/10 rounded-lg transition-all active:scale-95"
           >
             <Minus size={18} strokeWidth={3} />
           </button>
           <span className="w-14 text-center font-extrabold text-xl text-gray-900">{count}</span>
-          <button 
+          <button
             onClick={() => onChange(Math.min(20, count + 1))}
             className="p-2.5 text-gray-400 hover:text-[#E31E24] hover:bg-[#E31E24]/10 rounded-lg transition-all active:scale-95"
           >
@@ -126,8 +124,8 @@ function ArticleLimitControl({ count, onChange }: { count: number, onChange: (c:
 
 function TagManager({ tags, onChange, categories }: { tags: string[], onChange: (t: string[]) => void, categories: any[] }) {
 
-  const safeCategories = Array.isArray(categories) ? categories : (categories?.data  || []);
-  
+  const safeCategories = Array.isArray(categories) ? categories : [];
+
   // 2. Filter safely
   const availableCategories = safeCategories.filter((c: any) => !tags.includes(c.name));
 
@@ -146,9 +144,9 @@ function TagManager({ tags, onChange, categories }: { tags: string[], onChange: 
         <TagIcon size={16} /> Targeted Categories
       </h3>
       <p className="text-xs text-gray-500">Select categories. Articles matching these will be dynamically pulled.</p>
-      
+
       <div className="bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col gap-3 focus-within:border-[#E31E24] focus-within:ring-2 focus-within:ring-[#E31E24]/10 transition-all">
-        
+
         {/* Selected Pills */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -171,7 +169,7 @@ function TagManager({ tags, onChange, categories }: { tags: string[], onChange: 
             className="w-full appearance-none bg-white border border-gray-200 text-sm text-gray-900 font-medium py-2.5 pl-3 pr-10 rounded-lg outline-none hover:border-gray-300 transition-colors cursor-pointer"
           >
             <option value="" disabled>Select a category to add...</option>
-            {availableCategories.map((cat : any) => (
+            {availableCategories.map((cat: any) => (
               <option key={cat.id} value={cat.name}>
                 {cat.name}
               </option>
@@ -182,7 +180,7 @@ function TagManager({ tags, onChange, categories }: { tags: string[], onChange: 
           </select>
           {/* Custom Chevron for the Select */}
           <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6" /></svg>
           </div>
         </div>
       </div>

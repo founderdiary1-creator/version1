@@ -10,9 +10,12 @@ import { RichTextEditor } from '@/components/ui/RichTextEditor';
 import toast from 'react-hot-toast';
 import { 
   ArrowLeft, Image as ImageIcon, Save, Send, 
-  Plus, X, Trash2, ArrowUp, ArrowDown, LayoutTemplate
+  Plus, X, Trash2, ArrowUp, ArrowDown, LayoutTemplate,
+  Settings2
 } from 'lucide-react';
 import Link from 'next/link';
+import { IndustryManagerModal } from '@/components/features/admin/IndustryManagerModal';
+import { useQueryClient } from '@tanstack/react-query';
 
 // Types
 interface ContentBlockState {
@@ -27,6 +30,7 @@ interface ContentBlockState {
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data: categories = [] } = useCategoriesQuery();
   const { data: industries = [] } = useIndustriesQuery();
   const { data: companies = [] } = useAllCompaniesQuery();
@@ -37,6 +41,8 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState('');
   const [summaryPoints, setSummaryPoints] = useState<string[]>(['']);
+
+  const [isIndustryModalOpen, setIsIndustryModalOpen] = useState(false);
 
   // Meta State
   const [form, setForm] = useState({
@@ -452,14 +458,23 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold text-gray-900 mb-1.5">Industry Tag</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-sm font-semibold text-gray-900">Industry Tag</label>
+                    <button 
+                      onClick={() => setIsIndustryModalOpen(true)}
+                      className="text-[#E31E24] hover:bg-[#E31E24]/10 p-1 rounded-md transition-colors"
+                      title="Manage Industries"
+                    >
+                      <Settings2 size={16} />
+                    </button>
+                  </div>
                   <select
                     value={form.industry_id}
                     onChange={(e) => setForm((prev) => ({ ...prev, industry_id: e.target.value }))}
                     className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:border-black focus:bg-white transition-colors"
                   >
                     <option value="">Select industry...</option>
-                    {industries.map((ind) => (
+                    {industries.map((ind: any) => (
                       <option key={ind.id} value={ind.id}>{ind.name}</option>
                     ))}
                   </select>
@@ -564,6 +579,12 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           </div>
         </div>
       </div>
+      <IndustryManagerModal 
+              isOpen={isIndustryModalOpen} 
+              onClose={() => setIsIndustryModalOpen(false)} 
+              industries={industries}
+              onSuccess={() => queryClient.invalidateQueries({ queryKey: ['industries'] })}
+            />
     </div>
   );
 }

@@ -44,7 +44,7 @@ export default function IndustryPage({ params }: { params: Promise<{ slug: strin
               No insights published in {title} yet.
             </div>
           ) : (
-            articles.map((article) => (
+            articles.map((article : any) => (
               <div key={article.id} className="scroll-reveal">
                 <ArticleCardHorizontal
                   image={article.featured_image || '/images/news-funding.jpg'}

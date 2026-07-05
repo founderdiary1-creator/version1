@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { TopNav } from "@/components/layout/TopNav";
 import { MainNav } from "@/components/layout/MainNav";
 import { StockTicker } from "@/components/layout/StockTicker";
 import { Footer } from "@/components/layout/Footer";
@@ -14,12 +13,42 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Founder Diary — India's Leading Tech & Startup Media Platform",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://founderdiary.com'),
+  title: {
+    default: "Founder Diary | India's Startup Intelligence Network",
+    template: "%s | Founder Diary",
+  },
   description: "Breaking news, in-depth analysis, and data-driven insights on India's startup ecosystem, technology trends, and venture capital landscape.",
-  keywords: "startup news, Indian startups, funding rounds, tech news, venture capital, founder stories",
+  keywords: ["startup news", "Indian startups", "funding rounds", "tech news", "venture capital", "founder stories"],
+  openGraph: {
+    type: 'website',
+    locale: 'en_IN',
+    siteName: 'Founder Diary',
+    images: [
+      {
+        url: '/images/og-default.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Founder Diary | Startup Intelligence',
+      }
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+    },
+  },
 };
 
 import { AuthProvider } from "@/providers/AuthProvider";
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
@@ -31,6 +60,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col font-[var(--font-inter)]">
         <QueryProvider>
           <AuthProvider>
+            <Analytics />
             {/* <TopNav /> */}
             <StockTicker />
             <MainNav />

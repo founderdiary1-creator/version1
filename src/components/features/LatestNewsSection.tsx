@@ -3,6 +3,7 @@
 import { ArticleCardHorizontal } from './ArticleCardHorizontal';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface LatestNewsSectionProps {
     articles: any[];
@@ -55,7 +56,7 @@ export function LatestNewsSection({ articles, isLoading }: LatestNewsSectionProp
                                     alt="Founder Diary"
                                     width={20}
                                     height={20}
-                                    className="h-5 w-auto object-contain brightness-0 invert"
+                                    className="h-7  w-auto object-contain "
                                 />
                                 <span className="text-white text-xs font-bold tracking-widest uppercase">
                                     Datalabs
@@ -73,6 +74,7 @@ export function LatestNewsSection({ articles, isLoading }: LatestNewsSectionProp
                             </p>
 
                             {/* Premium Button with animated arrow */}
+                            <Link href="/datalabs">
                             <button className="group/btn relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full bg-white px-8 py-4 text-sm font-bold text-[#E31E24] shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[#E31E24]">
                                 <span>Explore Platform</span>
                                 <svg
@@ -85,6 +87,7 @@ export function LatestNewsSection({ articles, isLoading }: LatestNewsSectionProp
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                 </svg>
                             </button>
+                            </Link>
                         </div>
                     </div>
                 </div>

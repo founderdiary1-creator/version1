@@ -5,6 +5,8 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { MainNav } from "@/components/layout/MainNav";
 import { StockTicker } from "@/components/layout/StockTicker";
 import { Footer } from "@/components/layout/Footer";
+import { AuthProvider } from "@/providers/AuthProvider";
+import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,7 +28,7 @@ export const metadata: Metadata = {
     siteName: 'Founder Diary',
     images: [
       {
-        url: '/images/og-default.jpg',
+        url: '/images/og-default.jpeg',
         width: 1200,
         height: 630,
         alt: 'Founder Diary | Startup Intelligence',
@@ -47,8 +49,7 @@ export const metadata: Metadata = {
   },
 };
 
-import { AuthProvider } from "@/providers/AuthProvider";
-import { Analytics } from "@vercel/analytics/next"
+
 
 export default function RootLayout({
   children,

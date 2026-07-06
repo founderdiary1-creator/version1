@@ -21,7 +21,7 @@ export async function generateMetadata({
       type: 'website',
       images: [
         {
-          url: `/images/og-category.jpg`, // Ensure this placeholder exists, or dynamically link it
+          url: `/images/og-default.jpeg`, // Ensure this placeholder exists, or dynamically link it
           width: 1200,
           height: 630,
           alt: `${title} insights on Founder Diary`,

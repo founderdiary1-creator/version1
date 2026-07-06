@@ -64,10 +64,10 @@ export function LatestNewsSection({ articles, isLoading }: LatestNewsSectionProp
                             </div>
 
                             {/* Typography hierarchy */}
-                            <h3 className="text-white text-3xl sm:text-4xl font-bold leading-tight mb-4 tracking-tight">
+                            <h1 className="text-white text-3xl sm:text-4xl font-bold leading-tight mb-4 tracking-tight">
                                 India&apos;s #1 <br />
                                 <span className="text-white/80 font-light text-2xl sm:text-3xl">Startup Intelligence</span>
-                            </h3>
+                            </h1>
 
                             <p className="text-[#ffccd0] text-sm mb-10 max-w-[220px] mx-auto font-medium leading-relaxed">
                                 Data-driven insights tailored for high-growth enterprises.

@@ -61,8 +61,6 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <Analytics />
-            {/* <TopNav /> */}
-            <StockTicker />
             <MainNav />
             <main className="flex-1">{children}</main>
             <Footer />

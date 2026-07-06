@@ -2,6 +2,7 @@
 
 import { Check, Lock, Search, X } from "lucide-react";
 import { useState } from "react";
+import Image from "next/image";
 
 export function StorySelectorModal({ isOpen, onClose, limit, initialSelected, onSelectSave, articlesPool }: any) {
   const [search, setSearch] = useState('');
@@ -62,8 +63,7 @@ export function StorySelectorModal({ isOpen, onClose, limit, initialSelected, on
                 }`}
               >
                 <div className="w-16 h-12 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 relative">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={article.featured_image} alt="" className="w-full h-full object-cover" />
+                  <Image src={article.featured_image} alt="" fill sizes="64px" className="object-cover" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className={`text-sm font-bold line-clamp-1 transition-colors ${isPicked ? 'text-[#E31E24]' : 'text-gray-900 group-hover:text-[#E31E24]'}`}>

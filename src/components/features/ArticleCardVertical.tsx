@@ -9,9 +9,10 @@ interface ArticleCardVerticalProps {
   author: string;
   date: string;
   slug?: string;
+  priority?: boolean;
 }
 
-export function ArticleCardVertical({ image, category, title, author, date, slug }: ArticleCardVerticalProps) {
+export function ArticleCardVertical({ image, category, title, author, date, slug, priority = false }: ArticleCardVerticalProps) {
   
   // Premium Fallback State if Image is missing
   if (!image) {
@@ -37,7 +38,7 @@ export function ArticleCardVertical({ image, category, title, author, date, slug
           alt={title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 300px"
-          priority
+          priority={priority}
           className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-105"
         />
         

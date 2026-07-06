@@ -194,6 +194,7 @@ export function HeroSection() {
                         author={sub?.author_name ?? 'Team Founder Diary'}
                         date={formatDate(sub?.published_at ?? sub?.created_at)}
                         slug={sub?.slug ?? '#'}
+                        priority={index < 2}
                       />
                     </div>
                   </ErrorBoundary>

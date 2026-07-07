@@ -49,7 +49,7 @@ export function FundingRoundsSection() {
 
           <div className="flex items-center gap-6">
             <Link 
-              href="/data-labs" 
+              href="/datalabs" 
               className="hidden sm:flex items-center gap-2 text-xs font-bold text-white hover:text-white/80 uppercase tracking-widest transition-colors group"
             >
               Access Terminal
@@ -94,7 +94,7 @@ export function FundingRoundsSection() {
               <SwiperSlide key={idx} className="!w-[300px] sm:!w-[340px]">
                 
                 {/* Premium Ticket Card Design */}
-                <Link href="/data-labs" className="block w-full outline-none">
+                <Link href="/datalabs" className="block w-full outline-none">
                   <div className="group flex h-[140px] bg-white rounded-xl shadow-[0_4px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.2)] hover:-translate-y-1.5 transition-all duration-300 relative overflow-hidden cursor-pointer">
                     
                     {/* LEFT SECTION: Company Details */}
@@ -148,7 +148,7 @@ export function FundingRoundsSection() {
         {/* Mobile View All */}
         <div className="mt-8 text-center sm:hidden">
           <Link 
-            href="/data-labs" 
+            href="/datalabs" 
             className="inline-flex items-center gap-2 text-xs font-bold text-white uppercase tracking-widest transition-colors px-6 py-3 border border-white/30 rounded-full hover:bg-white hover:text-[#E31E24]"
           >
             Access Terminal <ArrowRight size={14} />

@@ -7,6 +7,7 @@ import { Search, Menu, X, ArrowRight } from 'lucide-react';
 import { useStickyNav } from '@/hooks/useStickyNav';
 import { useAuth } from '@/hooks/useAuth';
 import { useState, useRef, useEffect } from 'react';
+import { SearchCategoryOverlay } from '../features/search/SearchCategoryOverlay';
 
 export function MainNav() {
   const isScrolled = useStickyNav(100);
@@ -173,6 +174,11 @@ export function MainNav() {
           </div>
         </div>
       </nav>
+
+      <SearchCategoryOverlay 
+        isOpen={searchOpen && !mobileOpen} 
+        onClose={() => setSearchOpen(false)} 
+      />
 
       {/* Mobile Drawer Overlay */}
       <div

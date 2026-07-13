@@ -32,12 +32,12 @@ export function MoreArticlesSection({ articles = [] }: { articles: any[] }) {
                             ))}
                         </div>
 
-                        <div className="mt-12 text-center animate-fade-up" style={{ animationDelay: '400ms' }}>
+                        {/* <div className="mt-12 text-center animate-fade-up" style={{ animationDelay: '400ms' }}>
                             <Link href="/news" className="group inline-flex items-center gap-2 bg-transparent border border-gray-900 text-gray-900 font-bold px-8 py-3.5 rounded-xl hover:bg-gray-900 hover:text-white transition-all duration-300">
                                 Load More Articles
                                 <ArrowRight size={16} className="transition-transform group-hover:translate-x-1" />
                             </Link>
-                        </div>
+                        </div> */}
                     </div>
 
                 </div>

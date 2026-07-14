@@ -135,8 +135,8 @@ export default function ArticleClient({ params }: { params: Promise<{ slug: stri
       <div className="max-w-[1280px] mx-auto px-4 sm:px-6 py-8 md:py-12">
         
         {/* Navigation */}
-        <Link href="/news" className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gray-400 hover:text-[#E31E24] transition-colors mb-8 md:mb-12">
-          <ArrowLeft size={16} /> Briefing Room
+        <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold tracking-widest uppercase text-gray-400 hover:text-[#E31E24] transition-colors mb-8 md:mb-12">
+          <ArrowLeft size={16} /> Home
         </Link>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">

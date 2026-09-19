@@ -231,6 +231,19 @@ export default function QuestionDrawer({ sectionId, question, onClose }: Questio
           {/* Logic & Targeting */}
           <div className="space-y-5">
             <div>
+              <label className="block text-sm font-semibold text-gray-900 mb-2">System Identity Mapping (Optional)</label>
+              <select
+                value={formData.system_key || ''}
+                onChange={e => setFormData({ ...formData, system_key: e.target.value || null })}
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:border-[#E31E24] focus:outline-none bg-white"
+              >
+                <option value="">None (Generic Question)</option>
+                <option value="founder_name">Founder Name</option>
+                <option value="company_name">Company Name</option>
+                <option value="company_logo">Company Logo</option>
+              </select>
+            </div>
+            <div>
               <label className="block text-sm font-semibold text-gray-900 mb-2">Target Archetypes</label>
               <div className="flex flex-wrap gap-2">
                 {ARCHETYPES.map(arch => {

@@ -29,8 +29,12 @@
     "@hello-pangea/dnd": "^17.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.51.3",
     "react-hot-toast": "^2.6.0",
-    "swiper": "^14.0.0"
+    "react-pdf": "^9.1.0",
+    "swiper": "^14.0.0",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

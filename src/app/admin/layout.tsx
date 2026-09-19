@@ -55,8 +55,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+    { name: 'Submissions', href: '/admin/submissions', icon: ClipboardList },
     { name: 'Articles', href: '/admin/editor', icon: FileText },
-    { name: 'Onboarding Builder', href: '/admin/onboarding-builder', icon: ClipboardList },
+    { name: 'Onboarding Builder', href: '/admin/onboarding-builder', icon: Settings },
     { name: 'Layout Editor', href: '/admin/settings', icon: Settings },
   ];
 

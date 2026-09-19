@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
 import { GripVertical, Edit2, Trash2, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { FormSectionWithQuestions, FormQuestion } from '@/types/onboarding';
@@ -14,7 +14,13 @@ interface SectionListProps {
 }
 
 export default function SectionList({ sections, filterArchetype, onEditQuestion }: SectionListProps) {
+  const [localSections, setLocalSections] = useState<FormSectionWithQuestions[]>(sections);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  
+  // Sync local state when server data changes (but not during optimistic update)
+  useEffect(() => {
+    setLocalSections(sections);
+  }, [sections]);
   
   // State for confirm modals
   const [deletingSectionId, setDeletingSectionId] = useState<string | null>(null);
@@ -36,23 +42,39 @@ export default function SectionList({ sections, filterArchetype, onEditQuestion 
       return;
     }
 
+    // Create a deep copy for optimistic update
+    const newLocalSections = JSON.parse(JSON.stringify(localSections)) as FormSectionWithQuestions[];
+
     if (type === 'section') {
-      const items = Array.from(sections);
-      const [reorderedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, reorderedItem);
+      const [reorderedItem] = newLocalSections.splice(source.index, 1);
+      newLocalSections.splice(destination.index, 0, reorderedItem);
       
-      const payload = items.map((item, index) => ({ id: item.id, order_index: index }));
+      setLocalSections(newLocalSections); // Optimistic UI update
+
+      const payload = newLocalSections.map((item, index) => ({ id: item.id, order_index: index }));
       await reorderMutation.mutateAsync({ type: 'sections', items: payload });
     } else if (type === 'question') {
-      const sectionId = source.droppableId;
-      const section = sections.find(s => s.id === sectionId);
-      if (!section) return;
+      const sourceSection = newLocalSections.find(s => s.id === source.droppableId);
+      const destSection = newLocalSections.find(s => s.id === destination.droppableId);
+      if (!sourceSection || !destSection) return;
 
-      const items = Array.from(section.questions || []);
-      const [reorderedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, reorderedItem);
+      const sourceQuestions = Array.from(sourceSection.questions || []);
+      const [reorderedItem] = sourceQuestions.splice(source.index, 1);
+      
+      // If moving between sections (not currently supported well by this UI, but good to handle)
+      if (source.droppableId === destination.droppableId) {
+        sourceQuestions.splice(destination.index, 0, reorderedItem);
+        sourceSection.questions = sourceQuestions;
+      } else {
+        const destQuestions = Array.from(destSection.questions || []);
+        destQuestions.splice(destination.index, 0, reorderedItem);
+        sourceSection.questions = sourceQuestions;
+        destSection.questions = destQuestions;
+      }
 
-      const payload = items.map((item, index) => ({ id: item.id, order_index: index }));
+      setLocalSections(newLocalSections); // Optimistic UI update
+
+      const payload = sourceSection.questions.map((item, index) => ({ id: item.id, order_index: index }));
       await reorderMutation.mutateAsync({ type: 'questions', items: payload });
     }
   };
@@ -77,7 +99,7 @@ export default function SectionList({ sections, filterArchetype, onEditQuestion 
         <Droppable droppableId="board" type="section">
           {(provided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
-              {sections.map((section, index) => {
+              {localSections.map((section, index) => {
                 const isExpanded = expanded[section.id] ?? true;
                 
                 // Filter questions
@@ -99,7 +121,7 @@ export default function SectionList({ sections, filterArchetype, onEditQuestion 
                           onClick={() => toggleSection(section.id)}
                         >
                           <div className="flex items-center gap-3">
-                            <div {...provided.dragHandleProps} className="text-gray-400 hover:text-gray-700 p-1" onClick={(e) => e.stopPropagation()}>
+                            <div {...provided.dragHandleProps} className="text-gray-400 hover:text-gray-700 p-1 cursor-grab active:cursor-grabbing" onClick={(e) => e.stopPropagation()}>
                               <GripVertical size={20} />
                             </div>
                             <div>
@@ -157,7 +179,7 @@ export default function SectionList({ sections, filterArchetype, onEditQuestion 
                                         className="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-lg hover:border-[#E31E24]/30 hover:shadow-sm transition-all group"
                                       >
                                         <div className="flex items-center gap-3">
-                                          <div {...provided.dragHandleProps} className="text-gray-300 hover:text-gray-600">
+                                          <div {...provided.dragHandleProps} className="text-gray-300 hover:text-gray-600 p-1 cursor-grab active:cursor-grabbing">
                                             <GripVertical size={16} />
                                           </div>
                                           <div>

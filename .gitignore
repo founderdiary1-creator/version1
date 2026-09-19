@@ -43,3 +43,5 @@ next-env.d.ts
 /supabase_*
 .env
 .vscode/*
+
+package-lock.json

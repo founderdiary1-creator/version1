@@ -6,13 +6,13 @@ import { Footer } from './Footer';
 
 export function PublicLayoutWrapper({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isAdmin = pathname?.startsWith('/admin');
+  const isDistractionFree = pathname?.startsWith('/admin') || pathname?.startsWith('/onboarding');
 
   return (
     <>
-      {!isAdmin && <MainNav />}
+      {!isDistractionFree && <MainNav />}
       <main className="flex-1">{children}</main>
-      {!isAdmin && <Footer />}
+      {!isDistractionFree && <Footer />}
     </>
   );
 }

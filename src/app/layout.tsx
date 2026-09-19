@@ -2,10 +2,8 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { MainNav } from "@/components/layout/MainNav";
-import { StockTicker } from "@/components/layout/StockTicker";
-import { Footer } from "@/components/layout/Footer";
 import { AuthProvider } from "@/providers/AuthProvider";
+import { PublicLayoutWrapper } from "@/components/layout/PublicLayoutWrapper";
 import { Analytics } from "@vercel/analytics/next"
 
 const inter = Inter({
@@ -66,9 +64,9 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <Analytics />
-            <MainNav />
-            <main className="flex-1">{children}</main>
-            <Footer />
+            <PublicLayoutWrapper>
+              {children}
+            </PublicLayoutWrapper>
           </AuthProvider>
         </QueryProvider>
       </body>

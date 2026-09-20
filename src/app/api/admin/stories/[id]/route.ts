@@ -73,6 +73,59 @@ export async function PUT(
       return NextResponse.json({ success: false, error: 'Unauthorized', code: 401 }, { status: 401 });
     }
 
+    // --- DEEP MEDIA GARBAGE COLLECTION ---
+    // Fetch the existing story to compare images
+    const { data: oldStory } = await supabase
+      .from('stories')
+      .select('featured_image, content_blocks')
+      .eq('id', id)
+      .single();
+
+    if (oldStory) {
+      const extractImages = (story: any) => {
+        const images = [];
+        if (story.featured_image) images.push(story.featured_image);
+        if (story.content_blocks && Array.isArray(story.content_blocks)) {
+          story.content_blocks.forEach((block: any) => {
+            if (block.image_url) images.push(block.image_url);
+          });
+        }
+        return images;
+      };
+
+      const oldImages = extractImages(oldStory);
+      const newImages = extractImages(body);
+
+      // Find orphaned images (exist in DB but not in incoming update payload)
+      const orphanedImages = oldImages.filter(img => !newImages.includes(img));
+
+      if (orphanedImages.length > 0) {
+        import('@supabase/supabase-js').then(({ createClient }) => {
+          const adminSupabase = createClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.SUPABASE_SERVICE_ROLE_KEY!, 
+            { auth: { persistSession: false } }
+          );
+
+          const pathsToDelete = orphanedImages
+            .map(img => {
+              const parts = img.split('/article-images/');
+              return parts.length === 2 ? parts[1] : null;
+            })
+            .filter(Boolean) as string[];
+
+          if (pathsToDelete.length > 0) {
+            adminSupabase.storage
+              .from('article-images')
+              .remove(pathsToDelete)
+              .then(() => console.log(`Garbage collected ${pathsToDelete.length} orphaned images.`))
+              .catch(err => console.error('Failed to garbage collect images:', err));
+          }
+        });
+      }
+    }
+    // -------------------------------------
+
     const { data, error } = await supabase
       .from('stories')
       .update({ ...body, updated_at: new Date().toISOString() })

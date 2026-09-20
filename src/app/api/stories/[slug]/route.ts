@@ -8,6 +8,9 @@ export async function GET(
 ) {
   try {
     const slug = (await params).slug;
+    const { searchParams } = new URL(request.url);
+    const isPreview = searchParams.get('preview') === 'true';
+
     const cookieStore = await cookies();
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -20,12 +23,16 @@ export async function GET(
       }
     );
 
-    const { data, error } = await supabase
+    let query = supabase
       .from('stories')
       .select('*, category:categories(*), industry:industries(*)')
-      .eq('slug', slug)
-      .eq('status', 'published')
-      .single();
+      .eq('slug', slug);
+
+    if (!isPreview) {
+      query = query.eq('status', 'published');
+    }
+
+    const { data, error } = await query.single();
 
     if (error) {
       console.error(`[API_ERROR] /api/stories/${slug}:`, error);

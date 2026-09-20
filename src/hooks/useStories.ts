@@ -28,11 +28,11 @@ export function usePaginatedStories(page: number, limit: number, categorySlug?: 
   });
 }
 
-export function useStoryQuery(slug: string) {
+export function useStoryQuery(slug: string, isPreview?: boolean) {
   return useQuery({
-    queryKey: ['story', slug],
+    queryKey: ['story', slug, isPreview],
     queryFn: async (): Promise<Article> => {
-      const response = await apiClient.get(`/stories/${slug}`);
+      const response = await apiClient.get(`/stories/${slug}${isPreview ? '?preview=true' : ''}`);
       return response.data;
     },
     enabled: !!slug,

@@ -3,7 +3,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import ArticleClient from './ArticleClient';
 
-async function getArticleBySlug(slug: string) {
+async function getArticleBySlug(slug: string, isPreview: boolean = false) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -11,23 +11,31 @@ async function getArticleBySlug(slug: string) {
     { cookies: { getAll() { return cookieStore.getAll(); }, setAll() {} } }
   );
 
-  const { data } = await supabase
+  let query = supabase
     .from('stories')
     .select('title, summary, featured_image, author_name, published_at, category:categories(name, slug)')
-    .eq('slug', slug)
-    .eq('status', 'published')
-    .single();
+    .eq('slug', slug);
+
+  if (!isPreview) {
+    query = query.eq('status', 'published');
+  }
+
+  const { data } = await query.single();
 
   return data;
 }
 
 export async function generateMetadata({
-  params
+  params,
+  searchParams,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const article = await getArticleBySlug(slug);
+  const resolvedSearchParams = await searchParams;
+  const isPreview = resolvedSearchParams?.preview === 'true';
+  const article = await getArticleBySlug(slug, isPreview);
 
   if (!article) {
     return {
@@ -69,6 +77,14 @@ export async function generateMetadata({
   };
 }
 
-export default function ArticlePage({ params }: { params: Promise<{ slug: string }> }) {
-  return <ArticleClient params={params} />;
+export default async function ArticlePage({ 
+  params,
+  searchParams,
+}: { 
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ preview?: string }>;
+}) {
+  const resolvedSearchParams = await searchParams;
+  const isPreview = resolvedSearchParams?.preview === 'true';
+  return <ArticleClient params={params} isPreview={isPreview} />;
 }

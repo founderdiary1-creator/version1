@@ -281,6 +281,14 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             <h1 className="text-xl font-bold text-gray-900 tracking-tight">Edit Intelligence</h1>
           </div>
           <div className="flex gap-3">
+            <a
+              href={`/article/${form.slug}?preview=true`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 bg-white text-gray-700 font-semibold px-4 py-2 rounded-lg border border-gray-200 hover:border-gray-300 hover:bg-gray-50 transition-all"
+            >
+              Preview
+            </a>
             <button
               onClick={() => handleSubmit('draft')}
               disabled={loading}

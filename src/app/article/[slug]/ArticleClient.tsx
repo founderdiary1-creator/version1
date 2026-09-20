@@ -16,9 +16,9 @@ import { FundingSidebarWidget } from '@/components/features/datalabs/FundingSide
 import { CompanyDataCard } from '@/components/features/datalabs/CompanyDataCard';
 import type { ContentBlock } from '@/types/article';
 
-export default function ArticleClient({ params }: { params: Promise<{ slug: string }> }) {
+export default function ArticleClient({ params, isPreview }: { params: Promise<{ slug: string }>; isPreview?: boolean }) {
   const { slug } = use(params);
-  const { data: article, isLoading, isError } = useArticle(slug);
+  const { data: article, isLoading, isError } = useArticle(slug, isPreview);
 
   // States for micro-interactions
   const [isSaved, setIsSaved] = useState(false);

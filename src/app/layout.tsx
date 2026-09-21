@@ -5,6 +5,7 @@ import { QueryProvider } from "@/providers/QueryProvider";
 import { AuthProvider } from "@/providers/AuthProvider";
 import { PublicLayoutWrapper } from "@/components/layout/PublicLayoutWrapper";
 import { Analytics } from "@vercel/analytics/next"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -64,6 +65,7 @@ export default function RootLayout({
         <QueryProvider>
           <AuthProvider>
             <Analytics />
+            <SpeedInsights />
             <PublicLayoutWrapper>
               {children}
             </PublicLayoutWrapper>

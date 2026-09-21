@@ -10,6 +10,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@hello-pangea/dnd": "^17.0.0",
     "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.108.2",
     "@tanstack/react-query": "^5.101.2",
@@ -20,13 +21,13 @@
     "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^3.27.1",
     "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "axios": "^1.18.1",
     "date-fns": "^4.4.0",
     "framer-motion": "^12.42.2",
     "lucide-react": "^1.22.0",
     "next": "16.2.9",
     "next-cloudinary": "^6.11.0",
-    "@hello-pangea/dnd": "^17.0.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-dropzone": "^14.2.3",
@@ -38,17 +39,17 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^4.3.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
+    "jsdom": "^24.0.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^2.0.0",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/jest-dom": "^6.4.0",
-    "@vitejs/plugin-react": "^4.3.0",
-    "jsdom": "^24.0.0"
+    "vitest": "^2.0.0"
   }
 }

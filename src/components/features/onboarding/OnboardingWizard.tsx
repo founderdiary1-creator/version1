@@ -225,52 +225,164 @@ export function OnboardingWizard({ sections }: { sections: FormSectionWithQuesti
       <main className="flex-1 w-full max-w-2xl mx-auto px-4 sm:px-6 py-12 pb-40 relative">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           
-          {/* STEP 0: Archetype Selection */}
-          {currentStep === 0 && (
-            <motion.div
-              key="step-0"
-              custom={direction}
-              variants={variants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ type: "spring", stiffness: 260, damping: 20 }}
-              className="space-y-12"
-            >
-              <div className="text-center">
-                <h1 className="text-4xl font-black tracking-tight text-gray-900 mb-4">Welcome, Founder.</h1>
-                <p className="text-gray-500 text-lg leading-relaxed max-w-lg mx-auto">
-                  To tailor this experience and save your time, please select the stage that best describes your startup right now.
-                </p>
-              </div>
+          {/* STEP 0: The Executive Briefing & Archetype Selection */}
+{currentStep === 0 && (
+  <motion.div
+    key="step-0"
+    custom={direction}
+    variants={variants}
+    initial="enter"
+    animate="center"
+    exit="exit"
+    transition={{ type: "spring", stiffness: 260, damping: 20 }}
+    className="space-y-10 w-full max-w-4xl mx-auto px-4 sm:px-6 py-8"
+  >
+    {/* 1. Brand Logo Header */}
+    <div className="flex justify-center mb-8">
+      {/* Replace this div with your actual <img src="/logo.svg" alt="Founder Diary" /> if you have an SVG logo */}
+      <div className="flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-[#E31E24] flex items-center justify-center shadow-lg shadow-red-500/20">
+          <img src="/images/logo2.png" className='rounded-2xl' alt="Founder Diary" />
+        </div>
+        <span className="text-2xl font-black tracking-tight text-red-600">Founder Diary</span>
+      </div>
+    </div>
 
-              <div className="space-y-2">
-                <Controller
-                  name="archetype"
-                  control={form.control}
-                  render={({ field }) => (
-                    <CardRadio
-                      options={ARCHETYPES.map(a => a.id)}
-                      value={field.value}
-                      onChange={field.onChange}
-                    />
-                  )}
-                />
-                {form.formState.errors.archetype && (
-                  <p className="text-[#E31E24] text-sm font-medium mt-2 text-center">{form.formState.errors.archetype.message as string}</p>
-                )}
-              </div>
+    {/* 2. The Hook & Header */}
+    <div className="text-center space-y-4">
+      <h1 className="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 leading-tight">
+        Build Your Founder Playbook.
+      </h1>
+      <p className="text-gray-500 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto">
+        We don't do PR fluff. We are building an invite-only archive of the exact growth mechanics, unit economics, and tech stacks used by India's most efficient founders.
+      </p>
+    </div>
 
-              <div className="flex justify-center pt-8">
-                <button
-                  onClick={handleNext}
-                  className="flex items-center gap-2 bg-[#E31E24] text-white font-bold px-8 py-4 rounded-xl hover:bg-[#C41A20] transition-all shadow-[0_4px_20px_rgba(227,30,36,0.2)] focus:outline-none focus:ring-4 focus:ring-red-100"
-                >
-                  Start Playbook <ArrowRight size={20} />
-                </button>
-              </div>
-            </motion.div>
+    {/* 3. The Value Prop & Instructions (Premium Grid Layout) */}
+    <div className="grid grid-cols-1 gap-6 pt-6">
+      
+      {/* Left Column: The Rules */}
+      <div className="bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 shadow-sm flex flex-col justify-center">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">
+          How this works
+        </h2>
+        
+        <div className="space-y-8">
+          <div className="flex items-start gap-4">
+            <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-full bg-red-50 flex items-center justify-center border border-red-100">
+              <svg className="w-5 h-5 text-[#E31E24]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-base font-bold text-gray-900">Auto-Save Enabled</p>
+              <p className="text-sm text-gray-500 mt-1 leading-relaxed">Your progress is automatically saved to your browser. You can close this tab and resume anytime without losing data.</p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-4">
+            <div className="mt-1 flex-shrink-0 w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center border border-gray-200">
+              <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-base font-bold text-gray-900">100% Veto Power</p>
+              <p className="text-sm text-gray-500 mt-1 leading-relaxed">No surprises. You will receive a private preview link to review, edit, or approve the final draft before anything is published.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column: Premium Question Guide */}
+      <div className="bg-gray-50 border border-gray-200 rounded-3xl p-6 sm:p-8">
+        <h2 className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-6">
+          Question Guide
+        </h2>
+        
+        <div className="space-y-3">
+          {/* Mandatory Card */}
+          <div className="grid grid-cols-4 items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+            <div className="mt-0.5 col-span-1">
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-900 text-white rounded-md shadow-sm">Mandatory</span>
+            </div>
+            <div className="col-span-3">
+              <p className="text-sm font-bold text-gray-900">Core Identity</p>
+              <p className="text-xs text-gray-500 mt-0.5">Essential business details needed to build your profile.</p>
+            </div>
+          </div>
+          
+          {/* Recommended Card */}
+          <div className="grid grid-cols-4 gap-4 p-4 bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
+            <div className="mt-0.5 col-span-1">
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded-md">Recommended</span>
+            </div>
+            <div className="col-span-3">
+              <p className="text-sm font-bold text-gray-900">Investor Memo</p>
+              <p className="text-xs text-gray-500 mt-0.5">Crucial metrics and growth data used to construct the deep-dive.</p>
+            </div>
+          </div>
+          
+          {/* Optional Card */}
+          <div className="grid grid-cols-4 gap-4 p-4  bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
+            <div className="mt-0.5 col-span-1">
+              <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 text-gray-600 rounded-md">Optional</span>
+            </div>
+            <div className="col-span-3">
+              <p className="text-sm font-bold text-gray-900">Editorial Artifacts</p>
+              <p className="text-xs text-gray-500 mt-0.5">Extra context, screenshots, and pitch deck uploads.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    {/* 4. The Archetype Selection */}
+    <div className="space-y-6 pt-10">
+      <div className="text-center space-y-2">
+        <h3 className="text-2xl font-bold text-gray-900">Select your current stage.</h3>
+        <p className="text-gray-500 text-sm max-w-xl mx-auto">
+          We use this to filter out irrelevant questions. A bootstrapped founder faces totally different challenges than a Series A CEO.
+        </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto">
+        <Controller
+          name="archetype"
+          control={form.control}
+          render={({ field }) => (
+            <CardRadio
+              options={ARCHETYPES.map(a => a.id)}
+              value={field.value}
+              onChange={field.onChange}
+            />
           )}
+        />
+        {form.formState.errors.archetype && (
+          <motion.p 
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-[#E31E24] text-sm font-medium mt-3 text-center"
+          >
+            {form.formState.errors.archetype.message as string}
+          </motion.p>
+        )}
+      </div>
+    </div>
+
+    {/* 5. The Action Button */}
+    <div className="flex justify-center pt-8 pb-16">
+      <button
+        onClick={handleNext}
+        className="group relative flex items-center gap-3 bg-[#E31E24] text-white font-bold text-lg px-10 py-5 rounded-2xl hover:bg-[#C41A20] transition-all shadow-[0_8px_30px_rgba(227,30,36,0.25)] hover:shadow-[0_8px_30px_rgba(227,30,36,0.4)] focus:outline-none focus:ring-4 focus:ring-red-100 transform hover:-translate-y-1"
+      >
+        <span>Initialize Playbook</span>
+        <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
+      </button>
+    </div>
+  </motion.div>
+)}
 
           {/* STEP 1 to N: Form Sections */}
           {currentStep > 0 && currentStep <= totalSteps && (
@@ -295,8 +407,21 @@ export function OnboardingWizard({ sections }: { sections: FormSectionWithQuesti
                     <div className="space-y-12">
                       {section.questions.map(q => (
                         <div key={q.id}>
-                          <label className="block text-2xl font-bold tracking-tight text-gray-900 mb-2 leading-snug">
-                            {q.label} {q.visibility_tier === 'MANDATORY' && <span className="text-[#E31E24]">*</span>}
+                          <label className="flex items-start justify-between gap-4 text-2xl font-bold tracking-tight text-gray-900 mb-2 leading-snug">
+                            <div className="flex-1">
+                              {q.label} {q.visibility_tier === 'MANDATORY' && <span className="text-[#E31E24]">*</span>}
+                            </div>
+                            <div className="mt-1.5 shrink-0">
+                              {q.visibility_tier === 'MANDATORY' && (
+                                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-900 text-white rounded-md shadow-sm">Mandatory</span>
+                              )}
+                              {q.visibility_tier === 'RECOMMENDED_MEMO' && (
+                                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded-md">Recommended</span>
+                              )}
+                              {q.visibility_tier === 'OPTIONAL_DEEP_DIVE' && (
+                                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 text-gray-600 rounded-md">Optional</span>
+                              )}
+                            </div>
                           </label>
                           {q.helper_text && <p className="text-gray-500 text-base mb-6 leading-relaxed">{q.helper_text}</p>}
                           

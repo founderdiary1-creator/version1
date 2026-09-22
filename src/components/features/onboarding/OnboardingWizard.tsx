@@ -302,7 +302,7 @@ export function OnboardingWizard({ sections }: { sections: FormSectionWithQuesti
         
         <div className="space-y-3">
           {/* Mandatory Card */}
-          <div className="grid grid-cols-4 items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-4 items-start gap-4 p-4 bg-white rounded-2xl border border-gray-100 shadow-sm transition-all hover:shadow-md">
             <div className="mt-0.5 col-span-1">
               <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-900 text-white rounded-md shadow-sm">Mandatory</span>
             </div>
@@ -313,7 +313,7 @@ export function OnboardingWizard({ sections }: { sections: FormSectionWithQuesti
           </div>
           
           {/* Recommended Card */}
-          <div className="grid grid-cols-4 gap-4 p-4 bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 p-4 bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
             <div className="mt-0.5 col-span-1">
               <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-blue-50 text-blue-700 border border-blue-200 rounded-md">Recommended</span>
             </div>
@@ -324,7 +324,7 @@ export function OnboardingWizard({ sections }: { sections: FormSectionWithQuesti
           </div>
           
           {/* Optional Card */}
-          <div className="grid grid-cols-4 gap-4 p-4  bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 p-4  bg-white rounded-2xl border border-blue-100 shadow-sm transition-all hover:shadow-md">
             <div className="mt-0.5 col-span-1">
               <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-gray-200 text-gray-600 rounded-md">Optional</span>
             </div>
